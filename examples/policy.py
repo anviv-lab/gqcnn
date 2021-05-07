@@ -266,3 +266,16 @@ if __name__ == "__main__":
         vis.title("Planned grasp at depth {0:.3f}m with Q={1:.3f}".format(
             action.grasp.depth, action.q_value))
         vis.show()
+
+    name = os.path.split(depth_im_filename)[-1]
+    name = os.path.splitext(name)[0]
+
+    # save grasp to file
+    output = {
+        "depth": action.grasp.depth,
+        "center": action.grasp.center,
+        "angle": action.grasp.angle,
+        "width": action.grasp.width,
+    }
+    with open("grasp_result_" + name + ".json", "w") as f:
+        json.dump(output, f)
