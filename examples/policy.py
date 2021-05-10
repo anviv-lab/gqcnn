@@ -256,6 +256,12 @@ if __name__ == "__main__":
     action = policy(state)
     logger.info("Planning took %.3f sec" % (time.time() - policy_start))
 
+    name = os.path.split(depth_im_filename)[-1]
+    name = os.path.splitext(name)[0]
+
+    folder = "../gqcnn_results/" + name
+    os.makedirs(folder)
+
     # Vis final grasp.
     if policy_config["vis"]["final_grasp"]:
         vis.figure(size=(10, 10))
@@ -265,17 +271,16 @@ if __name__ == "__main__":
         vis.grasp(action.grasp, scale=2.5, show_center=False, show_axis=True)
         vis.title("Planned grasp at depth {0:.3f}m with Q={1:.3f}".format(
             action.grasp.depth, action.q_value))
-        vis.show()
-
-    name = os.path.split(depth_im_filename)[-1]
-    name = os.path.splitext(name)[0]
+        # vis.show()
+        vis.savefig(folder + "/" + name + ".png")
 
     # save grasp to file
     output = {
         "depth": action.grasp.depth,
-        "center": action.grasp.center,
+        "center": action.grasp.center.vector.tolist(),
         "angle": action.grasp.angle,
         "width": action.grasp.width,
     }
-    with open("grasp_result_" + name + ".json", "w") as f:
+
+    with open(folder + "/grasp_result_" + name + ".json", "w") as f:
         json.dump(output, f)
